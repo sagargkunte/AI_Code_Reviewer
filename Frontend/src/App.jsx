@@ -4,10 +4,18 @@ import { useState } from "react";
 import Editor from "react-simple-code-editor";
 import "./App.css";
 import "prismjs/components/prism-javascript"; 
+import axios from 'axios';
+import Markdown from 'react-markdown';
 
 function App() {
-  const [code, setCode] = useState(`function add(a, b) {\n  return a + b;\n}`);
+  const [code, setCode] = useState(`Enter your code which need to verify.. \nEx: function add() {\n  return a + b;\n} \n`);
+  const [review,setReview] = useState('');
 
+  async function reviewCode() {
+    const res = await axios.post('http://localhost:3000/ai/verifyCode',{code});
+    console.log(res.data);
+    setReview(res.data);
+  }
   return (
     <main>
       <div className="left">
@@ -21,7 +29,7 @@ function App() {
             padding={10}
             style={{
               fontSize: 12,
-              backgroundColor: "grey",
+              backgroundColor: "black",
               border: "1px solid #ddd",
               borderRadius: "5px",
               height: "100%",
@@ -30,9 +38,9 @@ function App() {
             }}
           />
         </div>
-        <div className="review">Review</div>
+        <div className="review" onClick={reviewCode}>Review</div>
       </div>
-      <div className="right"></div>
+      <div className="right"><Markdown>{review}</Markdown></div>
     </main>
   );
 }
